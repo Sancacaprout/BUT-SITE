@@ -20,10 +20,10 @@ import { isSupabaseConfigured } from "@/lib/supabase/client";
 const navItems = [
   { href: "/", label: "Accueil", icon: Home },
   { href: "/dashboard", label: "Tableau", icon: BarChart3 },
-  { href: "/week/week-1", label: "Semaine", icon: BookOpen },
+  { href: "/week", label: "Semaines", icon: BookOpen },
   { href: "/corrections", label: "Corrections", icon: FileText },
-  { href: "/project/week-1", label: "Projet", icon: Wrench },
-  { href: "/checkpoint/week-1", label: "Bilan", icon: ClipboardCheck },
+  { href: "/project", label: "Projets", icon: Wrench },
+  { href: "/checkpoint", label: "Bilans", icon: ClipboardCheck },
 ];
 
 function Navigation() {
@@ -43,9 +43,6 @@ function Navigation() {
           <span className="hidden min-w-0 lg:block">
             <span className="block truncate text-sm font-semibold leading-5 text-foreground">
               BUT Info
-            </span>
-            <span className="block truncate text-xs leading-4 text-muted-foreground">
-              5 semaines
             </span>
           </span>
         </Link>
