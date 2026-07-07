@@ -12,11 +12,11 @@ export function DayLearningPage({ day }: { day: Day }) {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
       <Link
-        href="/week/week-1"
+        href={`/week/week-${day.week}`}
         className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft size={17} aria-hidden="true" />
-        Retour semaine 1
+        Retour semaine {day.week}
       </Link>
 
       <section className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -64,7 +64,7 @@ export function DayLearningPage({ day }: { day: Day }) {
         </section>
 
         <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <QuizCard quizId={`day-${day.dayNumber}`} questions={day.eveningQuiz} />
+          <QuizCard quizId={`week-${day.week}-day-${day.dayNumber}`} questions={day.eveningQuiz} />
           <div className="space-y-5">
             <section className="rounded-lg border border-line bg-surface p-5 shadow-sm">
               <p className="text-sm font-semibold text-foreground">Révision active</p>

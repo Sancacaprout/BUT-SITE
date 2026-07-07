@@ -2,13 +2,13 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Day } from "@/content/week-1";
 
-export function DayTimeline({ days }: { days: Day[] }) {
+export function DayTimeline({ days, weekId }: { days: Day[]; weekId: string }) {
   return (
     <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
       {days.map((day) => (
         <Link
           key={day.id}
-          href={`/week/week-1/day/${day.id}`}
+          href={`/week/${weekId}/day/${day.id}`}
           className="group rounded-lg border border-line bg-surface p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-accent"
         >
           <div className="flex items-center justify-between gap-3">

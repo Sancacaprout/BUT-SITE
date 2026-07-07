@@ -2,24 +2,35 @@
 
 import { AlertTriangle, CheckCircle2, Clock, RotateCcw } from "lucide-react";
 import Link from "next/link";
-import { week1 } from "@/content/week-1";
+import { weeks } from "@/content/weeks";
 import { ProgressBar } from "@/components/progress/progress-bar";
 import { useProgress } from "@/lib/progress/progress-store";
 
 export function DashboardClient() {
   const { state } = useProgress();
-  const lessonsTotal = week1.days.reduce((total, day) => total + day.morning.length, 0);
-  const exercises = week1.days.flatMap((day) => day.afternoonExercises);
+  const lessonsTotal = weeks.reduce(
+    (total, week) => total + week.days.reduce((sum, day) => sum + day.morning.length, 0),
+    0,
+  );
+  const exercises = weeks.flatMap((week) => week.days.flatMap((day) => day.afternoonExercises));
   const doneLessons = Object.values(state.lessons).filter(Boolean).length;
   const doneExercises = exercises.filter((exercise) => state.exercises[exercise.id] === "done").length;
   const reviewExercises = exercises.filter((exercise) =>
     ["review", "stuck"].includes(state.exercises[exercise.id] ?? ""),
   );
-  const quizBest = week1.days.reduce(
-    (total, day) => total + (state.quizScores[`day-${day.dayNumber}`] ?? 0),
+  const quizTotal = weeks.reduce(
+    (total, week) => total + week.days.reduce((sum, day) => sum + day.eveningQuiz.length, 0),
     0,
   );
-  const quizTotal = week1.days.reduce((total, day) => total + day.eveningQuiz.length, 0);
+  const quizBest = weeks.reduce(
+    (total, week) =>
+      total +
+      week.days.reduce(
+        (sum, day) => sum + (state.quizScores[`week-${day.week}-day-${day.dayNumber}`] ?? 0),
+        0,
+      ),
+    0,
+  );
   const globalProgress =
     ((doneLessons + doneExercises + quizBest) /
       Math.max(1, lessonsTotal + exercises.length + quizTotal)) *
@@ -29,10 +40,9 @@ export function DashboardClient() {
     <div className="mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
       <section>
         <p className="font-mono text-sm text-accent-strong">Tableau de bord</p>
-        <h1 className="mt-2 text-4xl font-semibold text-foreground">Progression d’apprentissage</h1>
+        <h1 className="mt-2 text-4xl font-semibold text-foreground">Progression du parcours</h1>
         <p className="mt-3 max-w-3xl text-lg leading-8 text-muted-foreground">
-          Le tableau de bord privilégie les preuves d’apprentissage : sections revues,
-          exercices tentés, erreurs à reprendre et quiz du soir.
+          Suis ta progression sur les semaines 1, 2 et 3 : cours, exercices, quiz et points à reprendre.
         </p>
       </section>
 
@@ -45,36 +55,46 @@ export function DashboardClient() {
 
       <section className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="rounded-lg border border-line bg-surface p-5 shadow-sm">
-          <h2 className="text-xl font-semibold text-foreground">Par jour</h2>
+          <h2 className="text-xl font-semibold text-foreground">Par semaine</h2>
           <div className="mt-5 space-y-5">
-            {week1.days.map((day) => {
-              const dayLessonDone = day.morning.filter((section) => state.lessons[section.id]).length;
-              const dayExerciseDone = day.afternoonExercises.filter(
+            {weeks.map((week) => {
+              const weekLessons = week.days.reduce((sum, day) => sum + day.morning.length, 0);
+              const weekLessonDone = week.days.reduce(
+                (sum, day) => sum + day.morning.filter((section) => state.lessons[section.id]).length,
+                0,
+              );
+              const weekExercises = week.days.flatMap((day) => day.afternoonExercises);
+              const weekExerciseDone = weekExercises.filter(
                 (exercise) => state.exercises[exercise.id] === "done",
               ).length;
-              const dayQuiz = state.quizScores[`day-${day.dayNumber}`] ?? 0;
-              const dayTotal = day.morning.length + day.afternoonExercises.length + day.eveningQuiz.length;
-              const dayValue =
-                ((dayLessonDone + dayExerciseDone + dayQuiz) / Math.max(1, dayTotal)) * 100;
+              const weekQuiz = week.days.reduce(
+                (sum, day) => sum + (state.quizScores[`week-${day.week}-day-${day.dayNumber}`] ?? 0),
+                0,
+              );
+              const weekQuizTotal = week.days.reduce((sum, day) => sum + day.eveningQuiz.length, 0);
+              const weekValue =
+                ((weekLessonDone + weekExerciseDone + weekQuiz) /
+                  Math.max(1, weekLessons + weekExercises.length + weekQuizTotal)) *
+                100;
 
               return (
-                <div key={day.id} className="rounded-md border border-line p-4">
+                <div key={week.id} className="rounded-md border border-line p-4">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <h3 className="font-semibold text-foreground">
-                        Jour {day.dayNumber} - {day.title}
+                        Semaine {week.weekNumber} - {week.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground">{day.theme}</p>
+                      <p className="text-sm text-muted-foreground">{week.subtitle}</p>
                     </div>
                     <Link
-                      href={`/week/week-1/day/${day.id}`}
+                      href={`/week/${week.id}`}
                       className="text-sm font-medium text-accent-strong hover:text-accent"
                     >
                       Continuer
                     </Link>
                   </div>
                   <div className="mt-4">
-                    <ProgressBar value={dayValue} />
+                    <ProgressBar value={weekValue} />
                   </div>
                 </div>
               );
@@ -91,7 +111,7 @@ export function DashboardClient() {
                     dateStyle: "medium",
                     timeStyle: "short",
                   }).format(new Date(state.lastActivity))
-                : "Aucune activité enregistrée pour l’instant."}
+                : "Aucune activité enregistrée pour le moment."}
             </p>
           </div>
 
@@ -102,10 +122,10 @@ export function DashboardClient() {
                 {reviewExercises.slice(0, 8).map((exercise) => (
                   <Link
                     key={exercise.id}
-                    href={`/week/week-1/day/day-${exercise.day}#${exercise.id}`}
+                    href={`/corrections?focus=${exercise.correctionId}#${exercise.correctionId}`}
                     className="block rounded-md bg-surface-muted px-3 py-2 text-sm text-foreground hover:bg-accent-soft"
                   >
-                    Jour {exercise.day} · {exercise.title}
+                    {exercise.title}
                   </Link>
                 ))}
               </div>
@@ -120,8 +140,7 @@ export function DashboardClient() {
             <div className="flex gap-3">
               <AlertTriangle className="mt-0.5 shrink-0 text-amber-strong" size={20} aria-hidden="true" />
               <p className="text-sm leading-6 text-foreground">
-                Les corrections sont volontairement séparées. Essaie, écris ta réponse,
-                puis révèle seulement quand tu as quelque chose à comparer.
+                Les corrections restent séparées. Essaie, écris ta réponse, puis compare.
               </p>
             </div>
           </div>

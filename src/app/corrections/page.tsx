@@ -1,5 +1,5 @@
 import { ShieldCheck } from "lucide-react";
-import { week1 } from "@/content/week-1";
+import { getAllCorrections } from "@/content/weeks";
 import { CorrectionsBrowser } from "@/components/learning/corrections-browser";
 
 export default function CorrectionsPage() {
@@ -25,7 +25,7 @@ export default function CorrectionsPage() {
       </section>
 
       <section className="mt-8">
-        <CorrectionsBrowser corrections={week1.corrections} />
+        <CorrectionsBrowser corrections={getAllCorrections()} />
       </section>
     </div>
   );

@@ -1,5 +1,5 @@
 import { Library } from "lucide-react";
-import { week1 } from "@/content/week-1";
+import { getAllSheets } from "@/content/weeks";
 
 export default function LibraryPage() {
   return (
@@ -14,7 +14,7 @@ export default function LibraryPage() {
       </section>
 
       <section className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {week1.sheets.map((sheet) => (
+        {getAllSheets().map((sheet) => (
           <article id={sheet.id} key={sheet.id} className="rounded-lg border border-line bg-surface p-5 shadow-sm">
             <div className="flex items-center gap-2">
               <Library size={18} className="text-accent" aria-hidden="true" />

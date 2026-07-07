@@ -1,13 +1,15 @@
 import { notFound } from "next/navigation";
 import { DayLearningPage } from "@/components/learning/day-learning-page";
 import { getDayById } from "@/lib/content";
-import { week1 } from "@/content/week-1";
+import { getWeekById, weeks } from "@/content/weeks";
 
 export function generateStaticParams() {
-  return week1.days.map((day) => ({
-    weekId: week1.id,
-    dayId: day.id,
-  }));
+  return weeks.flatMap((week) =>
+    week.days.map((day) => ({
+      weekId: week.id,
+      dayId: day.id,
+    })),
+  );
 }
 
 export default async function DayPage({
@@ -16,11 +18,11 @@ export default async function DayPage({
   params: Promise<{ weekId: string; dayId: string }>;
 }) {
   const { weekId, dayId } = await params;
-  if (weekId !== week1.id) {
+  if (!getWeekById(weekId)) {
     notFound();
   }
 
-  const day = getDayById(dayId);
+  const day = getDayById(weekId, dayId);
   if (!day) {
     notFound();
   }

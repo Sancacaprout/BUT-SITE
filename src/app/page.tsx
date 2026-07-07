@@ -2,6 +2,7 @@ import { ArrowRight, BookOpen, CheckCircle2, FileText, ShieldCheck } from "lucid
 import Image from "next/image";
 import Link from "next/link";
 import { week1 } from "@/content/week-1";
+import { weeks } from "@/content/weeks";
 import { DayTimeline } from "@/components/learning/day-timeline";
 
 export default function Home() {
@@ -15,7 +16,7 @@ export default function Home() {
               {week1.title}
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-              {week1.overview}
+              Le parcours couvre maintenant trois semaines : bases Python, données/Git, puis SQL/web/sécurité.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
@@ -49,10 +50,10 @@ export default function Home() {
 
       <section className="mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <QuickLink href="/week/week-1" icon={BookOpen} title="Cours et jours" text="Une progression matin, après-midi, soir." />
+          <QuickLink href="/week/week-1" icon={BookOpen} title="Semaines" text="Semaine 1, 2 et 3 disponibles." />
           <QuickLink href="/corrections" icon={ShieldCheck} title="Corrections séparées" text="Solutions révélées après tentative." />
-          <QuickLink href="/project/week-1" icon={FileText} title="Mini-projet" text="Boîte à outils étudiant, grille sur 20." />
-          <QuickLink href="/checkpoint/week-1" icon={CheckCircle2} title="Checkpoint" text="Test blanc de 100 points." />
+          <QuickLink href="/project/week-1" icon={FileText} title="Mini-projets" text="Un projet progressif par semaine." />
+          <QuickLink href="/checkpoint/week-1" icon={CheckCircle2} title="Bilans" text="Tests blancs de fin de semaine." />
         </div>
       </section>
 
@@ -60,7 +61,7 @@ export default function Home() {
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="font-mono text-sm text-muted-foreground">Timeline</p>
-            <h2 className="text-2xl font-semibold text-foreground">Les 6 jours de construction</h2>
+            <h2 className="text-2xl font-semibold text-foreground">Semaine 1 - les 6 jours de construction</h2>
           </div>
           <Link
             href="/library"
@@ -70,17 +71,30 @@ export default function Home() {
             <ArrowRight size={17} aria-hidden="true" />
           </Link>
         </div>
-        <DayTimeline days={week1.days} />
+        <DayTimeline weekId={week1.id} days={week1.days} />
+        <div className="mt-6 grid gap-3 md:grid-cols-2">
+          {weeks.slice(1).map((week) => (
+            <Link
+              key={week.id}
+              href={`/week/${week.id}`}
+              className="rounded-lg border border-line bg-surface p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-accent"
+            >
+              <p className="font-mono text-sm text-accent-strong">Semaine {week.weekNumber}</p>
+              <h3 className="mt-2 text-xl font-semibold text-foreground">{week.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{week.subtitle}</p>
+            </Link>
+          ))}
+        </div>
       </section>
 
       <section className="border-t border-line bg-surface">
         <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-10 lg:grid-cols-[0.8fr_1.2fr] lg:px-6">
           <div>
             <p className="font-mono text-sm text-muted-foreground">Objectifs</p>
-            <h2 className="mt-2 text-2xl font-semibold text-foreground">Ce que tu dois savoir faire</h2>
+            <h2 className="mt-2 text-2xl font-semibold text-foreground">Ce que tu vas construire</h2>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
-            {week1.objectives.map((objective) => (
+            {weeks.flatMap((week) => week.objectives.slice(0, 2)).map((objective) => (
               <div key={objective} className="rounded-md border border-line bg-background p-4 text-sm leading-6 text-muted-foreground">
                 {objective}
               </div>
