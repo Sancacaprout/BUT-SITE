@@ -45,7 +45,7 @@ function Navigation() {
               BUT Info
             </span>
             <span className="block truncate text-xs leading-4 text-muted-foreground">
-              Semaine 1
+              5 semaines
             </span>
           </span>
         </Link>

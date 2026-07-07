@@ -16,7 +16,7 @@ export default function Home() {
               {week1.title}
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-              Le parcours couvre maintenant trois semaines : bases Python, données/Git, puis SQL/web/sécurité.
+              Le parcours couvre maintenant cinq semaines : bases Python, données/Git, SQL/web, qualité, puis projet final.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
@@ -50,7 +50,7 @@ export default function Home() {
 
       <section className="mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <QuickLink href="/week/week-1" icon={BookOpen} title="Semaines" text="Semaine 1, 2 et 3 disponibles." />
+          <QuickLink href="/week/week-1" icon={BookOpen} title="Semaines" text="Semaines 1 à 5 disponibles." />
           <QuickLink href="/corrections" icon={ShieldCheck} title="Corrections séparées" text="Solutions révélées après tentative." />
           <QuickLink href="/project/week-1" icon={FileText} title="Mini-projets" text="Un projet progressif par semaine." />
           <QuickLink href="/checkpoint/week-1" icon={CheckCircle2} title="Bilans" text="Tests blancs de fin de semaine." />

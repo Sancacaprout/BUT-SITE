@@ -1,7 +1,8 @@
 import { week1 } from "@/content/week-1";
 import { week2, week3 } from "@/content/weeks-extra";
+import { week4, week5 } from "@/content/weeks-more";
 
-export const weeks = [week1, week2, week3];
+export const weeks = [week1, week2, week3, week4, week5];
 
 export function getWeekById(weekId: string) {
   return weeks.find((week) => week.id === weekId);

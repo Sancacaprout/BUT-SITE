@@ -42,7 +42,7 @@ export function DashboardClient() {
         <p className="font-mono text-sm text-accent-strong">Tableau de bord</p>
         <h1 className="mt-2 text-4xl font-semibold text-foreground">Progression du parcours</h1>
         <p className="mt-3 max-w-3xl text-lg leading-8 text-muted-foreground">
-          Suis ta progression sur les semaines 1, 2 et 3 : cours, exercices, quiz et points à reprendre.
+          Suis ta progression sur les semaines 1 à 5 : cours, exercices, quiz et points à reprendre.
         </p>
       </section>
 
