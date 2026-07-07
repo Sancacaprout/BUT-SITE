@@ -42,11 +42,18 @@ create table if not exists public.settings (
   show_motivational_messages boolean not null default true
 );
 
+create table if not exists public.learning_state (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  state jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
 alter table public.profiles enable row level security;
 alter table public.progress enable row level security;
 alter table public.quiz_attempts enable row level security;
 alter table public.notes enable row level security;
 alter table public.settings enable row level security;
+alter table public.learning_state enable row level security;
 
 create policy "profiles_select_own" on public.profiles
   for select using (auth.uid() = id);
@@ -95,3 +102,15 @@ create policy "settings_insert_own" on public.settings
 
 create policy "settings_update_own" on public.settings
   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create policy "learning_state_select_own" on public.learning_state
+  for select using (auth.uid() = user_id);
+
+create policy "learning_state_insert_own" on public.learning_state
+  for insert with check (auth.uid() = user_id);
+
+create policy "learning_state_update_own" on public.learning_state
+  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create policy "learning_state_delete_own" on public.learning_state
+  for delete using (auth.uid() = user_id);

@@ -6,9 +6,11 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { z } from "zod";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 const ProgressStatusSchema = z.enum(["not-started", "done", "review", "stuck"]);
 export type ProgressStatus = z.infer<typeof ProgressStatusSchema>;
@@ -19,7 +21,7 @@ const SettingsSchema = z.object({
   showMotivationalMessages: z.boolean().default(true),
 });
 
-const ProgressStateSchema = z.object({
+export const ProgressStateSchema = z.object({
   lessons: z.record(z.string(), z.boolean()).default({}),
   exercises: z.record(z.string(), ProgressStatusSchema).default({}),
   hints: z.record(z.string(), z.number().min(0)).default({}),
@@ -34,6 +36,7 @@ export type ProgressState = z.infer<typeof ProgressStateSchema>;
 export type UserSettings = z.infer<typeof SettingsSchema>;
 
 const STORAGE_KEY = "but-info-progress-v1";
+const SYNC_TABLE = "learning_state";
 
 const emptyState: ProgressState = {
   lessons: {},
@@ -86,9 +89,89 @@ function applySettings(settings: UserSettings) {
   root.dataset.textSize = settings.textSize;
 }
 
+function mergeProgressState(local: ProgressState, cloud: ProgressState): ProgressState {
+  const localTime = local.lastActivity ? Date.parse(local.lastActivity) : 0;
+  const cloudTime = cloud.lastActivity ? Date.parse(cloud.lastActivity) : 0;
+  const newest = cloudTime >= localTime ? cloud : local;
+
+  return {
+    lessons: { ...local.lessons, ...cloud.lessons },
+    exercises: { ...local.exercises, ...cloud.exercises },
+    hints: { ...local.hints, ...cloud.hints },
+    quizScores: { ...local.quizScores, ...cloud.quizScores },
+    notes: { ...local.notes, ...cloud.notes },
+    reviewQueue: Array.from(new Set([...local.reviewQueue, ...cloud.reviewQueue])),
+    lastActivity: newest.lastActivity,
+    settings: newest.settings,
+  };
+}
+
+async function loadCloudState(local: ProgressState) {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    return null;
+  }
+
+  const currentSession = await supabase.auth.getSession();
+  const user =
+    currentSession.data.session?.user ??
+    (await supabase.auth.signInAnonymously()).data.user;
+
+  if (!user) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from(SYNC_TABLE)
+    .select("state")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.warn("Supabase progress load failed", error);
+    return null;
+  }
+
+  const cloud = data?.state ? ProgressStateSchema.safeParse(data.state) : null;
+  const merged = cloud?.success ? mergeProgressState(local, cloud.data) : local;
+
+  await supabase.from(SYNC_TABLE).upsert({
+    user_id: user.id,
+    state: merged,
+    updated_at: new Date().toISOString(),
+  });
+
+  return merged;
+}
+
+async function saveCloudState(state: ProgressState) {
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    return;
+  }
+
+  const { data } = await supabase.auth.getSession();
+  const user = data.session?.user;
+  if (!user) {
+    return;
+  }
+
+  const { error } = await supabase.from(SYNC_TABLE).upsert({
+    user_id: user.id,
+    state,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) {
+    console.warn("Supabase progress save failed", error);
+  }
+}
+
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<ProgressState>(emptyState);
   const [loaded, setLoaded] = useState(false);
+  const [cloudReady, setCloudReady] = useState(false);
+  const skipNextCloudSave = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -101,6 +184,22 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       setState(next);
       applySettings(next.settings);
       setLoaded(true);
+
+      void loadCloudState(next)
+        .then((cloudState) => {
+          if (cancelled || !cloudState) {
+            return;
+          }
+
+          skipNextCloudSave.current = true;
+          setState(cloudState);
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cloudState));
+          applySettings(cloudState.settings);
+          setCloudReady(true);
+        })
+        .catch((error) => {
+          console.warn("Supabase progress sync unavailable", error);
+        });
     }, 0);
 
     return () => {
@@ -117,6 +216,23 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     applySettings(state.settings);
   }, [loaded, state]);
+
+  useEffect(() => {
+    if (!loaded || !cloudReady) {
+      return;
+    }
+
+    if (skipNextCloudSave.current) {
+      skipNextCloudSave.current = false;
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      void saveCloudState(state);
+    }, 500);
+
+    return () => window.clearTimeout(timer);
+  }, [cloudReady, loaded, state]);
 
   const update = useCallback((recipe: (current: ProgressState) => ProgressState) => {
     setState((current) => ({
@@ -217,6 +333,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     setState(emptyState);
     window.localStorage.removeItem(STORAGE_KEY);
     applySettings(emptyState.settings);
+    void saveCloudState(emptyState);
   }, []);
 
   const value = useMemo<ProgressContextValue>(
