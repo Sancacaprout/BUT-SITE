@@ -4,15 +4,28 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import type { Correction } from "@/content/week-1";
 
-export function CorrectionPanel({ correction }: { correction: Correction }) {
-  const [revealed, setRevealed] = useState(false);
+export function CorrectionPanel({
+  correction,
+  defaultRevealed = false,
+  highlighted = false,
+}: {
+  correction: Correction;
+  defaultRevealed?: boolean;
+  highlighted?: boolean;
+}) {
+  const [revealed, setRevealed] = useState(defaultRevealed);
 
   return (
-    <article id={correction.id} className="rounded-lg border border-line bg-surface p-5 shadow-sm">
+    <article
+      id={correction.id}
+      className={`scroll-mt-24 rounded-lg border bg-surface p-5 shadow-sm ${
+        highlighted ? "border-accent ring-2 ring-accent/20" : "border-line"
+      }`}
+    >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="font-mono text-xs text-muted-foreground">
-            Semaine {correction.week} · Jour {correction.day}
+            Semaine {correction.week} - Jour {correction.day}
           </p>
           <h3 className="mt-1 text-xl font-semibold text-foreground">{correction.title}</h3>
         </div>
@@ -79,7 +92,7 @@ export function CorrectionPanel({ correction }: { correction: Correction }) {
         </div>
       ) : (
         <p className="mt-4 rounded-md bg-amber-soft px-4 py-3 text-sm text-foreground">
-          Correction masquée. Révèle-la seulement après avoir tenté l’exercice.
+          Correction masquée. Essaie avant de comparer avec la solution.
         </p>
       )}
     </article>

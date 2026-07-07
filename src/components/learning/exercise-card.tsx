@@ -2,7 +2,6 @@
 
 import { CheckCircle2, ExternalLink, RotateCcw, XCircle } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 import type { Exercise } from "@/content/week-1";
 import {
   type ProgressStatus,
@@ -23,7 +22,6 @@ const statusOptions: Array<{
 
 export function ExerciseCard({ exercise }: { exercise: Exercise }) {
   const { state, setExerciseStatus, saveNote } = useProgress();
-  const [confirmCorrection, setConfirmCorrection] = useState(false);
   const status = state.exercises[exercise.id] ?? "not-started";
 
   return (
@@ -103,26 +101,15 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
           <div className="rounded-md border border-line bg-surface-muted p-4">
             <p className="text-sm font-semibold text-foreground">Correction</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              Elle reste séparée pour éviter le spoiler pendant l’entraînement.
+              Accès direct à la bonne solution.
             </p>
-            {confirmCorrection ? (
-              <Link
-                href={`/corrections#${exercise.correctionId}`}
-                className="mt-3 inline-flex h-9 items-center justify-center gap-2 rounded-md bg-ink px-3 text-sm font-medium text-white hover:bg-ink-strong"
-              >
-                <ExternalLink size={16} aria-hidden="true" />
-                Ouvrir
-              </Link>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setConfirmCorrection(true)}
-                className="mt-3 inline-flex h-9 items-center justify-center gap-2 rounded-md border border-line bg-surface px-3 text-sm font-medium hover:bg-surface-muted"
-              >
-                <ExternalLink size={16} aria-hidden="true" />
-                Voir correction
-              </button>
-            )}
+            <Link
+              href={`/corrections?focus=${exercise.correctionId}#${exercise.correctionId}`}
+              className="mt-3 inline-flex h-9 items-center justify-center gap-2 rounded-md bg-ink px-3 text-sm font-medium text-white hover:bg-ink-strong"
+            >
+              <ExternalLink size={16} aria-hidden="true" />
+              Voir la correction
+            </Link>
           </div>
         </aside>
       </div>

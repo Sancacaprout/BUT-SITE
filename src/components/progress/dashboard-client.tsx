@@ -28,7 +28,7 @@ export function DashboardClient() {
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
       <section>
-        <p className="font-mono text-sm text-accent-strong">Dashboard</p>
+        <p className="font-mono text-sm text-accent-strong">Tableau de bord</p>
         <h1 className="mt-2 text-4xl font-semibold text-foreground">Progression d’apprentissage</h1>
         <p className="mt-3 max-w-3xl text-lg leading-8 text-muted-foreground">
           Le tableau de bord privilégie les preuves d’apprentissage : sections revues,

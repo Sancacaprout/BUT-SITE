@@ -56,7 +56,7 @@ export function DayLearningPage({ day }: { day: Day }) {
         <section className="space-y-4">
           <div>
             <p className="font-mono text-sm text-muted-foreground">Après-midi</p>
-            <h2 className="text-2xl font-semibold text-foreground">Exercices sans correction visible</h2>
+            <h2 className="text-2xl font-semibold text-foreground">Exercices</h2>
           </div>
           {day.afternoonExercises.map((exercise) => (
             <ExerciseCard key={exercise.id} exercise={exercise} />

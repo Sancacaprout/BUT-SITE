@@ -21,7 +21,7 @@ export function CheckpointClient({ week }: { week: Week }) {
     <div className="mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div>
-          <p className="font-mono text-sm text-accent-strong">Checkpoint</p>
+          <p className="font-mono text-sm text-accent-strong">Bilan</p>
           <h1 className="mt-2 text-4xl font-semibold text-foreground">{week.checkpoint.title}</h1>
           <p className="mt-3 max-w-3xl text-lg leading-8 text-muted-foreground">
             Durée conseillée : {week.checkpoint.duration}. Barème total : {week.checkpoint.totalPoints} points.
