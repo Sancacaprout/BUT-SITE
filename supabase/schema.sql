@@ -55,6 +55,27 @@ alter table public.notes enable row level security;
 alter table public.settings enable row level security;
 alter table public.learning_state enable row level security;
 
+drop policy if exists "profiles_select_own" on public.profiles;
+drop policy if exists "profiles_insert_own" on public.profiles;
+drop policy if exists "profiles_update_own" on public.profiles;
+drop policy if exists "progress_select_own" on public.progress;
+drop policy if exists "progress_insert_own" on public.progress;
+drop policy if exists "progress_update_own" on public.progress;
+drop policy if exists "progress_delete_own" on public.progress;
+drop policy if exists "quiz_attempts_select_own" on public.quiz_attempts;
+drop policy if exists "quiz_attempts_insert_own" on public.quiz_attempts;
+drop policy if exists "notes_select_own" on public.notes;
+drop policy if exists "notes_insert_own" on public.notes;
+drop policy if exists "notes_update_own" on public.notes;
+drop policy if exists "notes_delete_own" on public.notes;
+drop policy if exists "settings_select_own" on public.settings;
+drop policy if exists "settings_insert_own" on public.settings;
+drop policy if exists "settings_update_own" on public.settings;
+drop policy if exists "learning_state_select_own" on public.learning_state;
+drop policy if exists "learning_state_insert_own" on public.learning_state;
+drop policy if exists "learning_state_update_own" on public.learning_state;
+drop policy if exists "learning_state_delete_own" on public.learning_state;
+
 create policy "profiles_select_own" on public.profiles
   for select using (auth.uid() = id);
 
