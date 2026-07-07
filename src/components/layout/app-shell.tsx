@@ -30,24 +30,28 @@ function Navigation() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-line/80 bg-surface/90 shadow-sm backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-3 lg:px-6">
-        <Link href="/" className="flex min-w-0 items-center gap-3" aria-label="Accueil">
-          <span className="grid size-10 place-items-center rounded-md bg-accent text-white">
+        <Link
+          href="/"
+          className="group flex min-w-0 items-center gap-3 rounded-xl pr-2 transition hover:bg-surface-muted/70"
+          aria-label="Accueil"
+        >
+          <span className="grid size-11 place-items-center rounded-xl bg-accent text-white shadow-sm transition group-hover:bg-accent-strong">
             <BookOpen size={22} aria-hidden="true" />
           </span>
-          <span className="hidden min-w-0 md:block">
-            <span className="block truncate text-sm font-semibold text-foreground">
+          <span className="hidden min-w-0 lg:block">
+            <span className="block truncate text-sm font-semibold leading-5 text-foreground">
               BUT Info
             </span>
-            <span className="block truncate text-xs text-muted-foreground">
+            <span className="block truncate text-xs leading-4 text-muted-foreground">
               Semaine 1
             </span>
           </span>
         </Link>
 
         <nav
-          className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto"
+          className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto rounded-xl border border-line bg-surface-muted/70 p-1 shadow-inner [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           aria-label="Navigation principale"
         >
           {navItems.map((item) => {
@@ -58,14 +62,14 @@ function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-medium transition ${
+                className={`inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg px-3 text-sm font-semibold transition ${
                   active
-                    ? "bg-accent text-white"
-                    : "text-muted-foreground hover:bg-surface-muted hover:text-foreground"
+                    ? "bg-accent text-white shadow-sm"
+                    : "text-muted-foreground hover:bg-surface hover:text-foreground"
                 }`}
               >
                 <Icon size={17} aria-hidden="true" />
-                <span>{item.label}</span>
+                <span className="hidden sm:inline">{item.label}</span>
               </Link>
             );
           })}
@@ -73,7 +77,7 @@ function Navigation() {
 
         <Link
           href="/search"
-          className="grid size-10 shrink-0 place-items-center rounded-md border border-line text-muted-foreground hover:bg-surface-muted hover:text-foreground"
+          className="grid size-11 shrink-0 place-items-center rounded-xl border border-line bg-surface text-muted-foreground shadow-sm transition hover:bg-surface-muted hover:text-foreground"
           aria-label="Rechercher"
           title="Rechercher"
         >
@@ -81,7 +85,7 @@ function Navigation() {
         </Link>
         <Link
           href="/review"
-          className="hidden size-10 shrink-0 place-items-center rounded-md border border-line text-muted-foreground hover:bg-surface-muted hover:text-foreground sm:grid"
+          className="hidden size-11 shrink-0 place-items-center rounded-xl border border-line bg-surface text-muted-foreground shadow-sm transition hover:bg-surface-muted hover:text-foreground xl:grid"
           aria-label="Révision"
           title="Révision"
         >
@@ -89,7 +93,7 @@ function Navigation() {
         </Link>
         <Link
           href="/resources"
-          className="hidden size-10 shrink-0 place-items-center rounded-md border border-line text-muted-foreground hover:bg-surface-muted hover:text-foreground sm:grid"
+          className="hidden size-11 shrink-0 place-items-center rounded-xl border border-line bg-surface text-muted-foreground shadow-sm transition hover:bg-surface-muted hover:text-foreground xl:grid"
           aria-label="Ressources"
           title="Ressources"
         >
@@ -97,7 +101,7 @@ function Navigation() {
         </Link>
         <Link
           href="/settings"
-          className="grid size-10 shrink-0 place-items-center rounded-md border border-line text-muted-foreground hover:bg-surface-muted hover:text-foreground"
+          className="grid size-11 shrink-0 place-items-center rounded-xl border border-line bg-surface text-muted-foreground shadow-sm transition hover:bg-surface-muted hover:text-foreground"
           aria-label="Paramètres"
           title="Paramètres"
         >
