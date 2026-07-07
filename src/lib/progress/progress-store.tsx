@@ -113,9 +113,21 @@ async function loadCloudState(local: ProgressState) {
   }
 
   const currentSession = await supabase.auth.getSession();
-  const user =
-    currentSession.data.session?.user ??
-    (await supabase.auth.signInAnonymously()).data.user;
+  if (currentSession.error) {
+    console.warn("Supabase session load failed", currentSession.error);
+    return null;
+  }
+
+  const anonymousSignIn = currentSession.data.session
+    ? null
+    : await supabase.auth.signInAnonymously();
+
+  if (anonymousSignIn?.error) {
+    console.warn("Supabase anonymous sign-in failed", anonymousSignIn.error);
+    return null;
+  }
+
+  const user = currentSession.data.session?.user ?? anonymousSignIn?.data.user;
 
   if (!user) {
     return null;
@@ -135,11 +147,16 @@ async function loadCloudState(local: ProgressState) {
   const cloud = data?.state ? ProgressStateSchema.safeParse(data.state) : null;
   const merged = cloud?.success ? mergeProgressState(local, cloud.data) : local;
 
-  await supabase.from(SYNC_TABLE).upsert({
+  const saveInitial = await supabase.from(SYNC_TABLE).upsert({
     user_id: user.id,
     state: merged,
     updated_at: new Date().toISOString(),
   });
+
+  if (saveInitial.error) {
+    console.warn("Supabase initial progress save failed", saveInitial.error);
+    return null;
+  }
 
   return merged;
 }

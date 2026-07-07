@@ -55,6 +55,14 @@ alter table public.notes enable row level security;
 alter table public.settings enable row level security;
 alter table public.learning_state enable row level security;
 
+grant usage on schema public to authenticated;
+grant select, insert, update on public.profiles to authenticated;
+grant select, insert, update, delete on public.progress to authenticated;
+grant select, insert on public.quiz_attempts to authenticated;
+grant select, insert, update, delete on public.notes to authenticated;
+grant select, insert, update on public.settings to authenticated;
+grant select, insert, update, delete on public.learning_state to authenticated;
+
 drop policy if exists "profiles_select_own" on public.profiles;
 drop policy if exists "profiles_insert_own" on public.profiles;
 drop policy if exists "profiles_update_own" on public.profiles;
@@ -77,61 +85,61 @@ drop policy if exists "learning_state_update_own" on public.learning_state;
 drop policy if exists "learning_state_delete_own" on public.learning_state;
 
 create policy "profiles_select_own" on public.profiles
-  for select using (auth.uid() = id);
+  for select to authenticated using ((select auth.uid()) = id);
 
 create policy "profiles_insert_own" on public.profiles
-  for insert with check (auth.uid() = id);
+  for insert to authenticated with check ((select auth.uid()) = id);
 
 create policy "profiles_update_own" on public.profiles
-  for update using (auth.uid() = id) with check (auth.uid() = id);
+  for update to authenticated using ((select auth.uid()) = id) with check ((select auth.uid()) = id);
 
 create policy "progress_select_own" on public.progress
-  for select using (auth.uid() = user_id);
+  for select to authenticated using ((select auth.uid()) = user_id);
 
 create policy "progress_insert_own" on public.progress
-  for insert with check (auth.uid() = user_id);
+  for insert to authenticated with check ((select auth.uid()) = user_id);
 
 create policy "progress_update_own" on public.progress
-  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 create policy "progress_delete_own" on public.progress
-  for delete using (auth.uid() = user_id);
+  for delete to authenticated using ((select auth.uid()) = user_id);
 
 create policy "quiz_attempts_select_own" on public.quiz_attempts
-  for select using (auth.uid() = user_id);
+  for select to authenticated using ((select auth.uid()) = user_id);
 
 create policy "quiz_attempts_insert_own" on public.quiz_attempts
-  for insert with check (auth.uid() = user_id);
+  for insert to authenticated with check ((select auth.uid()) = user_id);
 
 create policy "notes_select_own" on public.notes
-  for select using (auth.uid() = user_id);
+  for select to authenticated using ((select auth.uid()) = user_id);
 
 create policy "notes_insert_own" on public.notes
-  for insert with check (auth.uid() = user_id);
+  for insert to authenticated with check ((select auth.uid()) = user_id);
 
 create policy "notes_update_own" on public.notes
-  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 create policy "notes_delete_own" on public.notes
-  for delete using (auth.uid() = user_id);
+  for delete to authenticated using ((select auth.uid()) = user_id);
 
 create policy "settings_select_own" on public.settings
-  for select using (auth.uid() = user_id);
+  for select to authenticated using ((select auth.uid()) = user_id);
 
 create policy "settings_insert_own" on public.settings
-  for insert with check (auth.uid() = user_id);
+  for insert to authenticated with check ((select auth.uid()) = user_id);
 
 create policy "settings_update_own" on public.settings
-  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 create policy "learning_state_select_own" on public.learning_state
-  for select using (auth.uid() = user_id);
+  for select to authenticated using ((select auth.uid()) = user_id);
 
 create policy "learning_state_insert_own" on public.learning_state
-  for insert with check (auth.uid() = user_id);
+  for insert to authenticated with check ((select auth.uid()) = user_id);
 
 create policy "learning_state_update_own" on public.learning_state
-  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for update to authenticated using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
 
 create policy "learning_state_delete_own" on public.learning_state
-  for delete using (auth.uid() = user_id);
+  for delete to authenticated using ((select auth.uid()) = user_id);
