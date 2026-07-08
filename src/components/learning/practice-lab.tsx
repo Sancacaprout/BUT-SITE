@@ -150,9 +150,12 @@ export function PracticeLab({ exercise }: { exercise: Exercise }) {
             <LabIcon size={17} aria-hidden="true" />
             {labTitle}
           </div>
-          <p className="mt-1 text-xs leading-5 text-code-foreground/75">
-            Environnement simulé dans le navigateur : pas besoin d’installer Ubuntu pour t’entraîner.
-          </p>
+          <details className="mt-1 text-xs text-code-foreground/75">
+            <summary className="cursor-pointer">À savoir</summary>
+            <p className="mt-1 leading-5">
+              Environnement simulé dans le navigateur : pas besoin d’installer Ubuntu pour t’entraîner.
+            </p>
+          </details>
         </div>
         <button
           type="button"
@@ -254,15 +257,19 @@ function LabChecklist({
 }) {
   return (
     <aside className="border-t border-white/10 bg-black/15 p-4 lg:border-l lg:border-t-0">
-      <p className="text-xs font-semibold uppercase tracking-wide text-code-foreground/70">Objectif vérifié</p>
-      <ul className="mt-3 space-y-2 text-xs leading-5 text-code-foreground/75">
-        {checks.map((check) => (
-          <li key={check} className="flex gap-2">
-            <span className="mt-2 size-1 shrink-0 rounded-full bg-accent-strong" />
-            <span>{check}</span>
-          </li>
-        ))}
-      </ul>
+      <details className="text-xs text-code-foreground/75">
+        <summary className="cursor-pointer font-semibold uppercase tracking-wide text-code-foreground/70">
+          Objectif vérifié
+        </summary>
+        <ul className="mt-3 space-y-2 leading-5">
+          {checks.map((check) => (
+            <li key={check} className="flex gap-2">
+              <span className="mt-2 size-1 shrink-0 rounded-full bg-accent-strong" />
+              <span>{check}</span>
+            </li>
+          ))}
+        </ul>
+      </details>
 
       {validation ? (
         <div

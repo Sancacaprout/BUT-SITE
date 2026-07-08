@@ -148,23 +148,34 @@ function ExerciseContext({
   usefulness: string;
 }) {
   return (
-    <div className="rounded-md border border-line bg-surface-muted/70 p-3">
-      <div className="grid gap-3 md:grid-cols-2">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-foreground">
-            <BookOpen size={14} aria-hidden="true" />
-            Contexte
-          </div>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">{context}</p>
-        </div>
-        <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-foreground">
-            <Target size={14} aria-hidden="true" />
-            Utilité
-          </div>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">{usefulness}</p>
-        </div>
+    <details className="rounded-md border border-line bg-surface-muted/70 px-3 py-2 text-sm">
+      <summary className="cursor-pointer font-medium text-foreground">
+        Contexte et utilité
+      </summary>
+      <div className="mt-3 grid gap-3 md:grid-cols-2">
+        <InfoText icon={BookOpen} title="Contexte" text={context} />
+        <InfoText icon={Target} title="Utilité" text={usefulness} />
       </div>
+    </details>
+  );
+}
+
+function InfoText({
+  icon: Icon,
+  title,
+  text,
+}: {
+  icon: typeof BookOpen;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div>
+      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-foreground">
+        <Icon size={14} aria-hidden="true" />
+        {title}
+      </div>
+      <p className="mt-1 text-xs leading-5 text-muted-foreground">{text}</p>
     </div>
   );
 }
@@ -182,11 +193,13 @@ function QuickHelpPanel({
   const hiddenPlan = actionPlan.slice(2);
 
   return (
-    <div className="rounded-md border border-line bg-surface-muted/80 p-3">
-      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-        <PlayCircle size={16} aria-hidden="true" />
-        Aide rapide
-      </div>
+    <details className="rounded-md border border-line bg-surface-muted/80 px-3 py-2 text-sm">
+      <summary className="cursor-pointer font-medium text-foreground">
+        <span className="inline-flex items-center gap-2">
+          <PlayCircle size={16} aria-hidden="true" />
+          Aide rapide
+        </span>
+      </summary>
 
       <div className="mt-3 space-y-3">
         <MiniList icon={PlayCircle} title="Départ" items={visibleSetup} />
@@ -208,7 +221,7 @@ function QuickHelpPanel({
           </div>
         </details>
       ) : null}
-    </div>
+    </details>
   );
 }
 
