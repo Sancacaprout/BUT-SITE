@@ -136,3 +136,73 @@ select {
   background: var(--accent-soft);
   color: var(--foreground);
 }
+
+.field-control {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--foreground);
+}
+
+[data-theme="dark"] .field-control {
+  background: #111b1e;
+  border-color: #314349;
+  color: #edf7f3;
+}
+
+.field-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.status-done {
+  background: var(--success-soft);
+  border-color: color-mix(in oklab, var(--success) 40%, transparent);
+  color: var(--success-strong);
+}
+
+.status-done-active {
+  background: linear-gradient(135deg, #16a34a, #166534);
+  border-color: #15803d;
+  color: #ffffff;
+}
+
+.status-review {
+  background: var(--warning-soft);
+  border-color: color-mix(in oklab, var(--warning) 42%, transparent);
+  color: var(--warning-strong);
+}
+
+.status-review-active {
+  background: linear-gradient(135deg, #f59e0b, #c2410c);
+  border-color: #c2410c;
+  color: #ffffff;
+}
+
+.status-stuck {
+  background: var(--danger-soft);
+  border-color: color-mix(in oklab, var(--danger) 42%, transparent);
+  color: var(--danger-strong);
+}
+
+.status-stuck-active {
+  background: linear-gradient(135deg, #e11d48, #991b1b);
+  border-color: #be123c;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .status-done {
+  background: #0d2a1a;
+  border-color: #166534;
+  color: #86efac;
+}
+
+[data-theme="dark"] .status-review {
+  background: #2a1d09;
+  border-color: #b45309;
+  color: #fcd34d;
+}
+
+[data-theme="dark"] .status-stuck {
+  background: #351017;
+  border-color: #be123c;
+  color: #fda4af;
+}

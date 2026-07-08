@@ -11,7 +11,6 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { getExerciseGuidance } from "@/content/guidance";
 import type { Exercise } from "@/content/week-1";
 import {
@@ -32,28 +31,22 @@ const statusOptions: Array<{
     value: "done",
     label: "Réussi",
     icon: CheckCircle2,
-    activeClassName:
-      "border-emerald-700 bg-gradient-to-br from-emerald-600 to-emerald-800 text-white shadow-sm",
-    inactiveClassName:
-      "border-success/35 bg-success-soft text-success-strong hover:border-success hover:bg-success-soft/80",
+    activeClassName: "status-done-active shadow-sm",
+    inactiveClassName: "status-done hover:brightness-105",
   },
   {
     value: "review",
     label: "À revoir",
     icon: RotateCcw,
-    activeClassName:
-      "border-orange-700 bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-sm",
-    inactiveClassName:
-      "border-warning/35 bg-warning-soft text-warning-strong hover:border-warning hover:bg-warning-soft/80",
+    activeClassName: "status-review-active shadow-sm",
+    inactiveClassName: "status-review hover:brightness-105",
   },
   {
     value: "stuck",
     label: "Non compris",
     icon: XCircle,
-    activeClassName:
-      "border-rose-800 bg-gradient-to-br from-rose-600 to-red-800 text-white shadow-sm",
-    inactiveClassName:
-      "border-danger/35 bg-danger-soft text-danger-strong hover:border-danger hover:bg-danger-soft/80",
+    activeClassName: "status-stuck-active shadow-sm",
+    inactiveClassName: "status-stuck hover:brightness-105",
   },
 ];
 
@@ -84,14 +77,7 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
               <SkillBadge key={skill}>{skill}</SkillBadge>
             ))}
           </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            <GuidanceCard icon={BookOpen} title="Avant le code">
-              {guidance.context}
-            </GuidanceCard>
-            <GuidanceCard icon={Target} title="A quoi ca sert">
-              {guidance.usefulness}
-            </GuidanceCard>
-          </div>
+          <ExerciseContext context={guidance.context} usefulness={guidance.usefulness} />
         </div>
 
         <div className="flex shrink-0 flex-wrap gap-2">
@@ -115,7 +101,7 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
         </div>
       </div>
 
-      <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_320px]">
+      <div className="mt-5 grid gap-4 md:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="space-y-4">
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-foreground">
@@ -124,7 +110,7 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
             <textarea
               value={state.notes[`answer-${exercise.id}`] ?? ""}
               onChange={(event) => saveNote(`answer-${exercise.id}`, event.target.value)}
-              className="min-h-36 w-full resize-y rounded-md border border-line bg-background p-3 text-sm leading-6 outline-none transition focus:border-accent"
+              className="field-control min-h-36 w-full resize-y rounded-md border p-3 text-sm leading-6 outline-none transition focus:border-accent"
               placeholder="Écris ton raisonnement, ton code ou les commandes testées."
             />
           </label>
@@ -132,22 +118,21 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
           <HintReveal exerciseId={exercise.id} hints={exercise.hints} />
         </div>
 
-        <aside className="space-y-4">
-          <GuidanceList icon={PlayCircle} title="Avant de commencer" items={guidance.setup} />
-          <GuidanceList icon={ListChecks} title="Plan d'action" items={guidance.actionPlan} ordered />
+        <aside className="space-y-3">
+          <QuickHelpPanel setup={guidance.setup} actionPlan={guidance.actionPlan} />
 
-          <div className="rounded-md border border-line bg-surface-muted p-4">
+          <div className="rounded-md border border-line bg-surface-muted p-3">
             <p className="text-sm font-semibold text-foreground">Erreurs fréquentes</p>
-            <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
+            <ul className="mt-2 space-y-1.5 text-xs leading-5 text-muted-foreground">
               {exercise.frequentMistakes.map((mistake) => (
                 <li key={mistake}>• {mistake}</li>
               ))}
             </ul>
           </div>
 
-          <div className="rounded-md border border-line bg-surface-muted p-4">
+          <div className="rounded-md border border-line bg-surface-muted p-3">
             <p className="text-sm font-semibold text-foreground">Correction</p>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-1 text-xs leading-5 text-muted-foreground">
               Accès direct à la bonne solution.
             </p>
             <Link
@@ -164,52 +149,116 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
   );
 }
 
-function GuidanceCard({
-  icon: Icon,
-  title,
-  children,
+function ExerciseContext({
+  context,
+  usefulness,
 }: {
-  icon: typeof BookOpen;
-  title: string;
-  children: ReactNode;
+  context: string;
+  usefulness: string;
 }) {
   return (
-    <div className="rounded-md border border-line bg-surface-muted p-4">
-      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-        <Icon size={16} aria-hidden="true" />
-        {title}
+    <div className="rounded-md border border-line bg-surface-muted/70 p-3">
+      <div className="grid gap-3 md:grid-cols-2">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-foreground">
+            <BookOpen size={14} aria-hidden="true" />
+            Contexte
+          </div>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">{context}</p>
+        </div>
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-foreground">
+            <Target size={14} aria-hidden="true" />
+            Utilité
+          </div>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">{usefulness}</p>
+        </div>
       </div>
-      <p className="mt-2 text-sm leading-6 text-muted-foreground">{children}</p>
     </div>
   );
 }
 
-function GuidanceList({
+function QuickHelpPanel({
+  setup,
+  actionPlan,
+}: {
+  setup: string[];
+  actionPlan: string[];
+}) {
+  const visibleSetup = setup.slice(0, 1);
+  const visiblePlan = actionPlan.slice(0, 2);
+  const hiddenSetup = setup.slice(1);
+  const hiddenPlan = actionPlan.slice(2);
+
+  return (
+    <div className="rounded-md border border-line bg-surface-muted/80 p-3">
+      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+        <PlayCircle size={16} aria-hidden="true" />
+        Aide rapide
+      </div>
+
+      <div className="mt-3 space-y-3">
+        <MiniList icon={PlayCircle} title="Départ" items={visibleSetup} />
+        <MiniList icon={ListChecks} title="Plan" items={visiblePlan} ordered />
+      </div>
+
+      {hiddenSetup.length > 0 || hiddenPlan.length > 0 ? (
+        <details className="mt-3 rounded-md border border-line bg-surface px-3 py-2 text-sm">
+          <summary className="cursor-pointer font-medium text-foreground">
+            Voir toutes les étapes
+          </summary>
+          <div className="mt-3 grid gap-3">
+            {hiddenSetup.length ? (
+              <MiniList icon={PlayCircle} title="Suite départ" items={hiddenSetup} />
+            ) : null}
+            {hiddenPlan.length ? (
+              <MiniList icon={ListChecks} title="Suite plan" items={hiddenPlan} ordered start={3} />
+            ) : null}
+          </div>
+        </details>
+      ) : null}
+    </div>
+  );
+}
+
+function MiniList({
   icon: Icon,
   title,
   items,
   ordered = false,
+  start,
 }: {
   icon: typeof BookOpen;
   title: string;
   items: string[];
   ordered?: boolean;
+  start?: number;
 }) {
   const List = ordered ? "ol" : "ul";
 
   return (
-    <div className="rounded-md border border-line bg-surface-muted p-4">
-      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-        <Icon size={16} aria-hidden="true" />
+    <div>
+      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-foreground">
+        <Icon size={14} aria-hidden="true" />
         {title}
       </div>
       <List
-        className={`mt-2 space-y-2 text-sm leading-6 text-muted-foreground ${
+        start={start}
+        className={`mt-1.5 space-y-1.5 text-xs leading-5 text-muted-foreground ${
           ordered ? "list-decimal pl-5" : ""
         }`}
       >
         {items.map((item) => (
-          <li key={item}>{ordered ? item : `• ${item}`}</li>
+          <li key={item} className={ordered ? "" : "flex gap-2"}>
+            {ordered ? (
+              item
+            ) : (
+              <>
+                <span className="mt-2 size-1 shrink-0 rounded-full bg-accent" />
+                <span>{item}</span>
+              </>
+            )}
+          </li>
         ))}
       </List>
     </div>

@@ -45,12 +45,28 @@ export function DayLearningPage({ day }: { day: Day }) {
         </aside>
       </section>
 
-      <section className="mt-6 grid gap-4 lg:grid-cols-3">
-        <DayGuidanceCard icon={Goal} title="But du jour">
-          {guidance.purpose}
-        </DayGuidanceCard>
-        <DayGuidanceList icon={PlayCircle} title="Avant de démarrer" items={guidance.before} />
-        <DayGuidanceList icon={Compass} title="A la fin, tu sauras" items={guidance.outcome} />
+      <section className="mt-6 rounded-xl border border-line bg-surface p-4 shadow-sm">
+        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Goal size={17} aria-hidden="true" />
+              But du jour
+            </div>
+            <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">
+              Objectif : {day.theme.toLowerCase()}. Comprends le contexte, prépare ton environnement, puis passe aux exercices.
+            </p>
+          </div>
+
+          <details className="rounded-lg border border-line bg-surface-muted/70 px-3 py-2 text-sm md:w-[320px]">
+            <summary className="cursor-pointer font-semibold text-foreground">
+              Préparation rapide
+            </summary>
+            <div className="mt-3 grid gap-3">
+              <CompactDayList icon={PlayCircle} title="Démarrage" items={guidance.before.slice(0, 3)} />
+              <CompactDayList icon={Compass} title="Objectif final" items={guidance.outcome.slice(0, 2)} />
+            </div>
+          </details>
+        </div>
       </section>
 
       <div className="mt-8 space-y-8">
@@ -93,27 +109,7 @@ export function DayLearningPage({ day }: { day: Day }) {
   );
 }
 
-function DayGuidanceCard({
-  icon: Icon,
-  title,
-  children,
-}: {
-  icon: typeof Goal;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <article className="rounded-lg border border-line bg-surface p-5 shadow-sm">
-      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-        <Icon size={18} aria-hidden="true" />
-        {title}
-      </div>
-      <p className="mt-3 text-sm leading-6 text-muted-foreground">{children}</p>
-    </article>
-  );
-}
-
-function DayGuidanceList({
+function CompactDayList({
   icon: Icon,
   title,
   items,
@@ -123,16 +119,19 @@ function DayGuidanceList({
   items: string[];
 }) {
   return (
-    <article className="rounded-lg border border-line bg-surface p-5 shadow-sm">
-      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-        <Icon size={18} aria-hidden="true" />
+    <div className="rounded-lg border border-line bg-surface-muted/70 p-3">
+      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-foreground">
+        <Icon size={15} aria-hidden="true" />
         {title}
       </div>
-      <ul className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
+      <ul className="mt-2 space-y-1.5 text-xs leading-5 text-muted-foreground">
         {items.map((item) => (
-          <li key={item}>• {item}</li>
+          <li key={item} className="flex gap-2">
+            <span className="mt-2 size-1 shrink-0 rounded-full bg-accent" />
+            <span>{item}</span>
+          </li>
         ))}
       </ul>
-    </article>
+    </div>
   );
 }
