@@ -18,6 +18,7 @@ import {
   useProgress,
 } from "@/lib/progress/progress-store";
 import { HintReveal } from "@/components/learning/hint-reveal";
+import { PracticeLab } from "@/components/learning/practice-lab";
 import { SkillBadge } from "@/components/learning/skill-badge";
 
 const statusOptions: Array<{
@@ -51,7 +52,7 @@ const statusOptions: Array<{
 ];
 
 export function ExerciseCard({ exercise }: { exercise: Exercise }) {
-  const { state, setExerciseStatus, saveNote } = useProgress();
+  const { state, setExerciseStatus } = useProgress();
   const status = state.exercises[exercise.id] ?? "not-started";
   const guidance = getExerciseGuidance(exercise);
 
@@ -103,17 +104,7 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
 
       <div className="mt-5 grid gap-4 md:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="space-y-4">
-          <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-foreground">
-              Réponse personnelle
-            </span>
-            <textarea
-              value={state.notes[`answer-${exercise.id}`] ?? ""}
-              onChange={(event) => saveNote(`answer-${exercise.id}`, event.target.value)}
-              className="field-control min-h-36 w-full resize-y rounded-md border p-3 text-sm leading-6 outline-none transition focus:border-accent"
-              placeholder="Écris ton raisonnement, ton code ou les commandes testées."
-            />
-          </label>
+          <PracticeLab exercise={exercise} />
 
           <HintReveal exerciseId={exercise.id} hints={exercise.hints} />
         </div>
