@@ -1,7 +1,18 @@
 "use client";
 
-import { CheckCircle2, ExternalLink, RotateCcw, XCircle } from "lucide-react";
+import {
+  BookOpen,
+  CheckCircle2,
+  ExternalLink,
+  ListChecks,
+  PlayCircle,
+  RotateCcw,
+  Target,
+  XCircle,
+} from "lucide-react";
 import Link from "next/link";
+import type { ReactNode } from "react";
+import { getExerciseGuidance } from "@/content/guidance";
 import type { Exercise } from "@/content/week-1";
 import {
   type ProgressStatus,
@@ -23,6 +34,7 @@ const statusOptions: Array<{
 export function ExerciseCard({ exercise }: { exercise: Exercise }) {
   const { state, setExerciseStatus, saveNote } = useProgress();
   const status = state.exercises[exercise.id] ?? "not-started";
+  const guidance = getExerciseGuidance(exercise);
 
   return (
     <article id={exercise.id} className="rounded-lg border border-line bg-surface p-5 shadow-sm">
@@ -45,6 +57,14 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
             {exercise.skills.map((skill) => (
               <SkillBadge key={skill}>{skill}</SkillBadge>
             ))}
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <GuidanceCard icon={BookOpen} title="Avant le code">
+              {guidance.context}
+            </GuidanceCard>
+            <GuidanceCard icon={Target} title="A quoi ca sert">
+              {guidance.usefulness}
+            </GuidanceCard>
           </div>
         </div>
 
@@ -89,6 +109,9 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
         </div>
 
         <aside className="space-y-4">
+          <GuidanceList icon={PlayCircle} title="Avant de commencer" items={guidance.setup} />
+          <GuidanceList icon={ListChecks} title="Plan d'action" items={guidance.actionPlan} ordered />
+
           <div className="rounded-md border border-line bg-surface-muted p-4">
             <p className="text-sm font-semibold text-foreground">Erreurs fréquentes</p>
             <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
@@ -114,5 +137,57 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
         </aside>
       </div>
     </article>
+  );
+}
+
+function GuidanceCard({
+  icon: Icon,
+  title,
+  children,
+}: {
+  icon: typeof BookOpen;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="rounded-md border border-line bg-surface-muted p-4">
+      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+        <Icon size={16} aria-hidden="true" />
+        {title}
+      </div>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">{children}</p>
+    </div>
+  );
+}
+
+function GuidanceList({
+  icon: Icon,
+  title,
+  items,
+  ordered = false,
+}: {
+  icon: typeof BookOpen;
+  title: string;
+  items: string[];
+  ordered?: boolean;
+}) {
+  const List = ordered ? "ol" : "ul";
+
+  return (
+    <div className="rounded-md border border-line bg-surface-muted p-4">
+      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+        <Icon size={16} aria-hidden="true" />
+        {title}
+      </div>
+      <List
+        className={`mt-2 space-y-2 text-sm leading-6 text-muted-foreground ${
+          ordered ? "list-decimal pl-5" : ""
+        }`}
+      >
+        {items.map((item) => (
+          <li key={item}>{ordered ? item : `• ${item}`}</li>
+        ))}
+      </List>
+    </div>
   );
 }

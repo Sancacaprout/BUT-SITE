@@ -1,14 +1,17 @@
 "use client";
 
-import { ArrowLeft, ListChecks } from "lucide-react";
+import { ArrowLeft, Compass, Goal, ListChecks, PlayCircle } from "lucide-react";
 import Link from "next/link";
 import type { Day } from "@/content/week-1";
+import { getDayGuidance } from "@/content/guidance";
 import { ExerciseCard } from "@/components/learning/exercise-card";
 import { LessonCard } from "@/components/learning/lesson-card";
 import { NoteBox } from "@/components/learning/note-box";
 import { QuizCard } from "@/components/quiz/quiz-card";
 
 export function DayLearningPage({ day }: { day: Day }) {
+  const guidance = getDayGuidance(day);
+
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
       <Link
@@ -40,6 +43,14 @@ export function DayLearningPage({ day }: { day: Day }) {
             ))}
           </ul>
         </aside>
+      </section>
+
+      <section className="mt-6 grid gap-4 lg:grid-cols-3">
+        <DayGuidanceCard icon={Goal} title="But du jour">
+          {guidance.purpose}
+        </DayGuidanceCard>
+        <DayGuidanceList icon={PlayCircle} title="Avant de démarrer" items={guidance.before} />
+        <DayGuidanceList icon={Compass} title="A la fin, tu sauras" items={guidance.outcome} />
       </section>
 
       <div className="mt-8 space-y-8">
@@ -79,5 +90,49 @@ export function DayLearningPage({ day }: { day: Day }) {
         </section>
       </div>
     </div>
+  );
+}
+
+function DayGuidanceCard({
+  icon: Icon,
+  title,
+  children,
+}: {
+  icon: typeof Goal;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <article className="rounded-lg border border-line bg-surface p-5 shadow-sm">
+      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+        <Icon size={18} aria-hidden="true" />
+        {title}
+      </div>
+      <p className="mt-3 text-sm leading-6 text-muted-foreground">{children}</p>
+    </article>
+  );
+}
+
+function DayGuidanceList({
+  icon: Icon,
+  title,
+  items,
+}: {
+  icon: typeof Goal;
+  title: string;
+  items: string[];
+}) {
+  return (
+    <article className="rounded-lg border border-line bg-surface p-5 shadow-sm">
+      <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+        <Icon size={18} aria-hidden="true" />
+        {title}
+      </div>
+      <ul className="mt-3 space-y-2 text-sm leading-6 text-muted-foreground">
+        {items.map((item) => (
+          <li key={item}>• {item}</li>
+        ))}
+      </ul>
+    </article>
   );
 }

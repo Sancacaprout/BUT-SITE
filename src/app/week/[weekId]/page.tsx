@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
-import { CalendarDays, CheckCircle2, Target } from "lucide-react";
+import { BookOpenCheck, CalendarDays, CheckCircle2, Route, Target } from "lucide-react";
 import Link from "next/link";
+import { getWeekGuidance } from "@/content/guidance";
 import { getWeekById, weeks } from "@/content/weeks";
 import { DayTimeline } from "@/components/learning/day-timeline";
 
@@ -18,6 +19,7 @@ export default async function WeekPage({
   if (!week) {
     notFound();
   }
+  const guidance = getWeekGuidance(week);
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-8 lg:px-6">
@@ -56,6 +58,34 @@ export default async function WeekPage({
             ))}
           </ul>
         </aside>
+      </section>
+
+      <section className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
+        <article className="rounded-lg border border-line bg-surface p-5 shadow-sm">
+          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <BookOpenCheck size={18} aria-hidden="true" />
+            But de la semaine
+          </div>
+          <p className="mt-3 text-sm leading-7 text-muted-foreground">{guidance.purpose}</p>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+            {week.objectives.slice(0, 4).map((objective) => (
+              <li key={objective} className="rounded-md bg-surface-muted px-3 py-2 text-sm text-foreground">
+                {objective}
+              </li>
+            ))}
+          </ul>
+        </article>
+        <article className="rounded-lg border border-line bg-surface p-5 shadow-sm">
+          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <Route size={18} aria-hidden="true" />
+            Comment utiliser cette semaine
+          </div>
+          <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-muted-foreground">
+            {guidance.method.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ol>
+        </article>
       </section>
 
       <section className="mt-8">

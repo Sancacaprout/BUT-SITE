@@ -11,6 +11,31 @@ export const glossary: GlossaryEntry[] = [
     aliases: ["console", "shell", "ligne de commande"],
   },
   {
+    term: "Ubuntu",
+    definition: "Système Linux que tu peux lancer sous Windows avec WSL. Dans le site, ouvrir Ubuntu signifie ouvrir ce terminal Linux pour taper des commandes.",
+    aliases: ["linux", "wsl", "terminal linux"],
+  },
+  {
+    term: "WSL",
+    definition: "Fonction de Windows qui permet d'utiliser Linux, donc Ubuntu et ses commandes, sans quitter Windows.",
+    aliases: ["windows subsystem for linux", "ubuntu windows"],
+  },
+  {
+    term: "VS Code",
+    definition: "Éditeur de code utilisé pour écrire des fichiers Python, HTML, CSS ou JavaScript et les lancer depuis un terminal.",
+    aliases: ["visual studio code", "éditeur"],
+  },
+  {
+    term: "script",
+    definition: "Fichier de code que tu peux lancer pour exécuter une suite d'instructions, par exemple un fichier Python en .py.",
+    aliases: ["programme", "fichier python", ".py"],
+  },
+  {
+    term: "dossier personnel",
+    definition: "Dossier de départ de ton utilisateur. Dans Ubuntu, `cd ~` permet d'y revenir rapidement.",
+    aliases: ["home", "~", "répertoire personnel"],
+  },
+  {
     term: "chemin relatif",
     definition: "Chemin décrit depuis le dossier courant, par exemple ../a/note.txt.",
     aliases: ["relatif", ".."],
