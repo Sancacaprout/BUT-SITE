@@ -25,10 +25,36 @@ const statusOptions: Array<{
   value: ProgressStatus;
   label: string;
   icon: typeof CheckCircle2;
+  activeClassName: string;
+  inactiveClassName: string;
 }> = [
-  { value: "done", label: "Réussi", icon: CheckCircle2 },
-  { value: "review", label: "À revoir", icon: RotateCcw },
-  { value: "stuck", label: "Non compris", icon: XCircle },
+  {
+    value: "done",
+    label: "Réussi",
+    icon: CheckCircle2,
+    activeClassName:
+      "border-emerald-700 bg-gradient-to-br from-emerald-600 to-emerald-800 text-white shadow-sm",
+    inactiveClassName:
+      "border-success/35 bg-success-soft text-success-strong hover:border-success hover:bg-success-soft/80",
+  },
+  {
+    value: "review",
+    label: "À revoir",
+    icon: RotateCcw,
+    activeClassName:
+      "border-orange-700 bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-sm",
+    inactiveClassName:
+      "border-warning/35 bg-warning-soft text-warning-strong hover:border-warning hover:bg-warning-soft/80",
+  },
+  {
+    value: "stuck",
+    label: "Non compris",
+    icon: XCircle,
+    activeClassName:
+      "border-rose-800 bg-gradient-to-br from-rose-600 to-red-800 text-white shadow-sm",
+    inactiveClassName:
+      "border-danger/35 bg-danger-soft text-danger-strong hover:border-danger hover:bg-danger-soft/80",
+  },
 ];
 
 export function ExerciseCard({ exercise }: { exercise: Exercise }) {
@@ -41,7 +67,7 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-md bg-ink px-2 py-1 font-mono text-xs text-white">
+            <span className="rounded-md bg-ink px-2 py-1 font-mono text-xs text-ink-contrast">
               Jour {exercise.day}
             </span>
             <span className="rounded-md bg-surface-muted px-2 py-1 text-xs font-medium text-muted-foreground">
@@ -77,10 +103,8 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
                 type="button"
                 key={option.value}
                 onClick={() => setExerciseStatus(exercise.id, option.value)}
-                className={`inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium transition ${
-                  active
-                    ? "bg-accent text-white"
-                    : "border border-line bg-surface hover:bg-surface-muted"
+                className={`inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-medium transition ${
+                  active ? option.activeClassName : option.inactiveClassName
                 }`}
               >
                 <Icon size={16} aria-hidden="true" />
@@ -128,7 +152,7 @@ export function ExerciseCard({ exercise }: { exercise: Exercise }) {
             </p>
             <Link
               href={`/corrections?focus=${exercise.correctionId}#${exercise.correctionId}`}
-              className="mt-3 inline-flex h-9 items-center justify-center gap-2 rounded-md bg-ink px-3 text-sm font-medium text-white hover:bg-ink-strong"
+              className="mt-3 inline-flex h-9 items-center justify-center gap-2 rounded-md bg-ink px-3 text-sm font-medium text-ink-contrast hover:bg-ink-strong"
             >
               <ExternalLink size={16} aria-hidden="true" />
               Voir la correction

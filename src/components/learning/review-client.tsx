@@ -53,14 +53,14 @@ export function ReviewClient({ cards }: { cards: RevisionCard[] }) {
             <button
               type="button"
               onClick={() => setRevealed((current) => !current)}
-              className="inline-flex h-10 items-center justify-center rounded-md bg-ink px-4 text-sm font-medium text-white hover:bg-ink-strong"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-ink px-4 text-sm font-medium text-ink-contrast hover:bg-ink-strong"
             >
               {revealed ? "Cacher" : "Révéler"}
             </button>
             <button
               type="button"
               onClick={next}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 text-sm font-medium hover:bg-surface-muted"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-success/35 bg-success-soft px-4 text-sm font-medium text-success-strong hover:border-success"
             >
               <CheckCircle2 size={17} aria-hidden="true" />
               Je sais
@@ -71,7 +71,7 @@ export function ReviewClient({ cards }: { cards: RevisionCard[] }) {
                 setExerciseStatus(`review-${card.id}`, "review");
                 next();
               }}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 text-sm font-medium hover:bg-surface-muted"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-warning/35 bg-warning-soft px-4 text-sm font-medium text-warning-strong hover:border-warning"
             >
               <RotateCcw size={17} aria-hidden="true" />
               Je ne sais pas

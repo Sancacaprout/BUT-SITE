@@ -111,7 +111,7 @@ export function QuizCard({
           type="button"
           onClick={submit}
           disabled={Object.keys(answers).length !== questions.length}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-accent px-4 text-sm font-medium text-white hover:bg-accent-strong disabled:cursor-not-allowed disabled:bg-muted"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-accent px-4 text-sm font-medium text-accent-contrast hover:bg-accent-hover disabled:cursor-not-allowed disabled:bg-muted"
         >
           <Trophy size={17} aria-hidden="true" />
           Valider le quiz

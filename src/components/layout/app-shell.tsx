@@ -37,7 +37,7 @@ function Navigation() {
           className="group flex min-w-0 items-center gap-3 rounded-xl pr-2 transition hover:bg-surface-muted/70"
           aria-label="Accueil"
         >
-          <span className="grid size-11 place-items-center rounded-xl bg-accent text-white shadow-sm transition group-hover:bg-accent-strong">
+          <span className="grid size-11 place-items-center rounded-xl bg-accent text-accent-contrast shadow-sm transition group-hover:bg-accent-hover">
             <BookOpen size={22} aria-hidden="true" />
           </span>
           <span className="hidden min-w-0 lg:block">
@@ -61,7 +61,7 @@ function Navigation() {
                 href={item.href}
                 className={`inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-lg px-3 text-sm font-semibold transition ${
                   active
-                    ? "bg-accent text-white shadow-sm"
+                    ? "bg-accent text-accent-contrast shadow-sm"
                     : "text-muted-foreground hover:bg-surface hover:text-foreground"
                 }`}
               >

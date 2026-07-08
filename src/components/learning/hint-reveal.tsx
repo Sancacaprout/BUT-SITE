@@ -22,7 +22,7 @@ export function HintReveal({
           type="button"
           onClick={() => revealHint(exerciseId, hints.length)}
           disabled={!canReveal}
-          className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-accent px-3 text-sm font-medium text-white transition hover:bg-accent-strong disabled:cursor-not-allowed disabled:bg-muted"
+          className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-accent px-3 text-sm font-medium text-accent-contrast transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:bg-muted"
         >
           <Lightbulb size={16} aria-hidden="true" />
           {canReveal ? "Je bloque" : "Tous révélés"}

@@ -26,7 +26,7 @@ export default function Home() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/week"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-white hover:bg-accent-strong"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-accent px-4 text-sm font-semibold text-accent-contrast hover:bg-accent-hover"
             >
               <BookOpen size={18} aria-hidden="true" />
               Voir les semaines

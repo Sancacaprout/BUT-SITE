@@ -33,7 +33,7 @@ export default async function WeekPage({
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href={`/week/${week.id}/day/day-1`}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-accent px-4 text-sm font-semibold text-white hover:bg-accent-strong"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-accent px-4 text-sm font-semibold text-accent-contrast hover:bg-accent-hover"
             >
               <CalendarDays size={18} aria-hidden="true" />
               Commencer jour 1

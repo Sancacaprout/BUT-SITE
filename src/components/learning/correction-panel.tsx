@@ -32,7 +32,7 @@ export function CorrectionPanel({
         <button
           type="button"
           onClick={() => setRevealed((current) => !current)}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-medium text-white hover:bg-ink-strong"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-medium text-ink-contrast hover:bg-ink-strong"
         >
           {revealed ? <EyeOff size={17} aria-hidden="true" /> : <Eye size={17} aria-hidden="true" />}
           {revealed ? "Masquer" : "Révéler"}

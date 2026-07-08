@@ -27,7 +27,7 @@ export function ProjectClient({ week }: { week: Week }) {
           </div>
         </div>
 
-        <aside className="rounded-2xl border border-line bg-ink p-5 text-white shadow-sm">
+        <aside className="rounded-2xl border border-line bg-ink p-5 text-ink-contrast shadow-sm">
           <div className="flex items-center gap-2 text-sm font-semibold">
             <ListChecks size={18} aria-hidden="true" />
             Dossier attendu
@@ -47,7 +47,7 @@ export function ProjectClient({ week }: { week: Week }) {
           <ol className="mt-4 grid gap-3 sm:grid-cols-2">
             {project.steps.map((step, index) => (
               <li key={step} className="rounded-lg border border-line bg-background p-4">
-                <span className="grid size-8 place-items-center rounded-lg bg-accent text-sm font-semibold text-white">
+                <span className="grid size-8 place-items-center rounded-lg bg-accent text-sm font-semibold text-accent-contrast">
                   {index + 1}
                 </span>
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">{step}</p>
@@ -98,7 +98,7 @@ export function ProjectClient({ week }: { week: Week }) {
           <button
             type="button"
             onClick={() => setRevealed((current) => !current)}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-ink px-4 text-sm font-medium text-white hover:bg-ink-strong"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-ink px-4 text-sm font-medium text-ink-contrast hover:bg-ink-strong"
           >
             {revealed ? <EyeOff size={17} aria-hidden="true" /> : <Eye size={17} aria-hidden="true" />}
             {revealed ? "Masquer" : "Révéler"}

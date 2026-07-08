@@ -69,7 +69,7 @@ function ActionLink({
       href={href}
       className={`inline-flex h-10 items-center justify-center gap-2 rounded-lg px-3 text-sm font-semibold transition ${
         primary
-          ? "bg-accent text-white hover:bg-accent-strong"
+          ? "bg-accent text-accent-contrast hover:bg-accent-hover"
           : "border border-line bg-background text-foreground hover:bg-surface-muted"
       }`}
     >
