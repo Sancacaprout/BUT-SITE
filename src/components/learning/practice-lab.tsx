@@ -4,19 +4,17 @@ import { CheckCircle2, Code2, Play, RotateCcw, Terminal, XCircle } from "lucide-
 import { useMemo, useState } from "react";
 import type { Exercise } from "@/content/week-1";
 import { useProgress } from "@/lib/progress/progress-store";
+import {
+  createBaseTerminalState,
+  ensureParents,
+  executeTerminalCommand,
+  normalizePath,
+  shortPath,
+  type FsEntry,
+  type TerminalState,
+} from "@/lib/terminal-simulator";
 
 type LabMode = "terminal" | "python" | "code";
-
-type FsEntry =
-  | { type: "dir" }
-  | { type: "file"; content: string };
-
-type TerminalState = {
-  cwd: string;
-  entries: Record<string, FsEntry>;
-  transcript: string[];
-  history: string[];
-};
 
 type ValidationResult = {
   ok: boolean;
@@ -105,7 +103,7 @@ export function PracticeLab({ exercise }: { exercise: Exercise }) {
       return;
     }
 
-    const next = executeCommand(terminalState, trimmed);
+    const next = executeTerminalCommand(terminalState, trimmed);
     setTerminalState(next);
     setCommand("");
     markIfDone(validateTerminalExercise(exercise, next));
@@ -153,7 +151,8 @@ export function PracticeLab({ exercise }: { exercise: Exercise }) {
           <details className="mt-1 text-xs text-code-foreground/75">
             <summary className="cursor-pointer">À savoir</summary>
             <p className="mt-1 leading-5">
-              Environnement simulé dans le navigateur : pas besoin d’installer Ubuntu pour t’entraîner.
+              Environnement simulé dans le navigateur : pas besoin d’installer Ubuntu pour t’entraîner. Tape `help`
+              si tu veux voir les commandes disponibles.
             </p>
           </details>
         </div>
@@ -363,11 +362,8 @@ function getStarterCode(exercise: Exercise, mode: LabMode) {
 }
 
 function createInitialTerminalState(exercise: Exercise): TerminalState {
-  const entries: Record<string, FsEntry> = {
-    "/": { type: "dir" },
-    "/home": { type: "dir" },
-    "/home/student": { type: "dir" },
-  };
+  const base = createBaseTerminalState();
+  const entries: Record<string, FsEntry> = { ...base.entries };
 
   const addDir = (path: string) => {
     entries[normalizePath(path, "/home/student")] = { type: "dir" };
@@ -399,200 +395,11 @@ function createInitialTerminalState(exercise: Exercise): TerminalState {
   }
 
   return {
-    cwd: "/home/student",
+    cwd: base.cwd,
     entries,
-    transcript: [
-      "Ubuntu éducatif prêt. Ce terminal est simulé dans le navigateur.",
-      "Tape une commande puis Entrée. Exemples : pwd, ls, cd ~, mkdir test.",
-    ],
-    history: [],
+    transcript: base.transcript,
+    history: base.history,
   };
-}
-
-function executeCommand(state: TerminalState, command: string): TerminalState {
-  if (command === "clear") {
-    return { ...state, transcript: [] };
-  }
-
-  const entries = { ...state.entries };
-  const transcript = [...state.transcript, `$ ${command}`];
-  const history = [...state.history, command];
-  let cwd = state.cwd;
-
-  const write = (line = "") => transcript.push(line);
-  const fail = (message: string) => write(message);
-
-  const tokens = tokenize(command);
-  const name = tokens[0] ?? "";
-
-  try {
-    if (name === "pwd") {
-      write(cwd);
-    } else if (name === "ls") {
-      const target = normalizePath(tokens.find((token) => !token.startsWith("-")) ?? ".", cwd);
-      const entry = entries[target];
-      if (!entry) {
-        fail(`ls: impossible d'accéder à '${target}'`);
-      } else if (entry.type === "file") {
-        write(basename(target));
-      } else {
-        const children = Object.keys(entries)
-          .filter((path) => dirname(path) === target && path !== target)
-          .map(basename)
-          .sort();
-        write(children.join("  "));
-      }
-    } else if (name === "cd") {
-      const target = normalizePath(tokens[1] ?? "~", cwd);
-      if (entries[target]?.type === "dir") {
-        cwd = target;
-      } else {
-        fail(`cd: ${tokens[1] ?? ""}: dossier introuvable`);
-      }
-    } else if (name === "mkdir") {
-      const recursive = tokens.includes("-p");
-      const paths = tokens.slice(1).filter((token) => token !== "-p");
-      for (const path of paths) {
-        const fullPath = normalizePath(path, cwd);
-        if (recursive) {
-          ensureParents(entries, `${fullPath}/child`);
-        }
-        ensureParents(entries, fullPath);
-        entries[fullPath] = { type: "dir" };
-      }
-    } else if (name === "touch") {
-      for (const path of tokens.slice(1)) {
-        const fullPath = normalizePath(path, cwd);
-        ensureParents(entries, fullPath);
-        entries[fullPath] = { type: "file", content: entries[fullPath]?.type === "file" ? entries[fullPath].content : "" };
-      }
-    } else if (name === "echo") {
-      handleEcho(tokens.slice(1), cwd, entries, write);
-    } else if (name === "cat") {
-      for (const path of tokens.slice(1)) {
-        const fullPath = normalizePath(path, cwd);
-        const entry = entries[fullPath];
-        if (entry?.type === "file") {
-          write(entry.content.trimEnd());
-        } else {
-          fail(`cat: ${path}: fichier introuvable`);
-        }
-      }
-    } else if (name === "cp") {
-      const [sourceRaw, destRaw] = tokens.slice(1);
-      const source = normalizePath(sourceRaw ?? "", cwd);
-      let dest = normalizePath(destRaw ?? "", cwd);
-      const sourceEntry = entries[source];
-      if (!sourceEntry || sourceEntry.type !== "file") {
-        fail("cp: source introuvable ou non supportée");
-      } else {
-        if (entries[dest]?.type === "dir") {
-          dest = `${dest}/${basename(source)}`;
-        }
-        ensureParents(entries, dest);
-        entries[dest] = { type: "file", content: sourceEntry.content };
-      }
-    } else if (name === "mv") {
-      const [sourceRaw, destRaw] = tokens.slice(1);
-      const source = normalizePath(sourceRaw ?? "", cwd);
-      let dest = normalizePath(destRaw ?? "", cwd);
-      const sourceEntry = entries[source];
-      if (!sourceEntry) {
-        fail("mv: source introuvable");
-      } else {
-        if (entries[dest]?.type === "dir") {
-          dest = `${dest}/${basename(source)}`;
-        }
-        ensureParents(entries, dest);
-        entries[dest] = sourceEntry;
-        delete entries[source];
-      }
-    } else if (name === "rm") {
-      const recursive = tokens.includes("-r") || tokens.includes("-rf") || tokens.includes("-fr");
-      const paths = tokens.slice(1).filter((token) => !token.startsWith("-"));
-      for (const path of paths) {
-        const fullPath = normalizePath(path, cwd);
-        const entry = entries[fullPath];
-        if (!entry) {
-          fail(`rm: ${path}: introuvable`);
-        } else if (entry.type === "dir" && !recursive) {
-          fail(`rm: ${path}: est un dossier, ajoute -r si c'est volontaire`);
-        } else {
-          for (const key of Object.keys(entries)) {
-            if (key === fullPath || key.startsWith(`${fullPath}/`)) {
-              delete entries[key];
-            }
-          }
-        }
-      }
-    } else if (name === "man") {
-      if (tokens[1] === "rm") {
-        write("RM(1) - remove files or directories");
-        write("-r, -R, --recursive : supprimer les dossiers et leur contenu récursivement.");
-      } else {
-        write("Manuel simulé : essaie `man rm` pour cet exercice.");
-      }
-    } else if (name === "git") {
-      handleGit(tokens.slice(1), cwd, entries, write);
-    } else {
-      fail(`${name}: commande non disponible dans ce simulateur.`);
-    }
-  } catch {
-    fail("Erreur du simulateur : vérifie la syntaxe de ta commande.");
-  }
-
-  return { cwd, entries, transcript, history };
-}
-
-function handleEcho(
-  tokens: string[],
-  cwd: string,
-  entries: Record<string, FsEntry>,
-  write: (line?: string) => void,
-) {
-  const redirectIndex = tokens.findIndex((token) => token === ">" || token === ">>");
-  if (redirectIndex === -1) {
-    write(tokens.join(" "));
-    return;
-  }
-
-  const append = tokens[redirectIndex] === ">>";
-  const content = tokens.slice(0, redirectIndex).join(" ");
-  const targetRaw = tokens[redirectIndex + 1];
-  if (!targetRaw) {
-    write("echo: redirection sans fichier");
-    return;
-  }
-
-  const target = normalizePath(targetRaw, cwd);
-  ensureParents(entries, target);
-  const previous = entries[target]?.type === "file" ? entries[target].content : "";
-  entries[target] = { type: "file", content: append ? `${previous}${content}\n` : `${content}\n` };
-}
-
-function handleGit(
-  tokens: string[],
-  cwd: string,
-  entries: Record<string, FsEntry>,
-  write: (line?: string) => void,
-) {
-  const command = tokens[0];
-  if (command === "init") {
-    entries[`${cwd}/.git`] = { type: "dir" };
-    write("Dépôt Git initialisé.");
-  } else if (command === "status") {
-    write(entries[`${cwd}/.git`] ? "Sur la branche main. Rien à valider pour l'instant." : "fatal: pas un dépôt git");
-  } else if (command === "add") {
-    write("Fichiers préparés.");
-  } else if (command === "commit") {
-    write("[main abc123] Commit simulé");
-  } else if (command === "log") {
-    write("abc123 Commit simulé");
-  } else if (command === "diff") {
-    write("Diff simulé : aucune différence affichée.");
-  } else {
-    write("git: commande simulée disponible : init, status, add, commit, log, diff.");
-  }
 }
 
 function validateTerminalExercise(exercise: Exercise, state: TerminalState): ValidationResult {
@@ -756,53 +563,4 @@ function runStaticCodePreview(code: string) {
   return {
     output: code.trim() ? "Réponse enregistrée. Le validateur vérifie les éléments attendus." : "",
   };
-}
-
-function tokenize(command: string) {
-  const tokens: string[] = [];
-  const regex = /"([^"]*)"|'([^']*)'|(\S+)/g;
-  let match: RegExpExecArray | null;
-  while ((match = regex.exec(command))) {
-    tokens.push(match[1] ?? match[2] ?? match[3]);
-  }
-  return tokens;
-}
-
-function normalizePath(input: string, cwd: string) {
-  let path = input || ".";
-  if (path === "~") path = "/home/student";
-  else if (path.startsWith("~/")) path = `/home/student/${path.slice(2)}`;
-  else if (!path.startsWith("/")) path = `${cwd}/${path}`;
-
-  const parts: string[] = [];
-  for (const part of path.split("/")) {
-    if (!part || part === ".") continue;
-    if (part === "..") parts.pop();
-    else parts.push(part);
-  }
-  return `/${parts.join("/")}` || "/";
-}
-
-function ensureParents(entries: Record<string, FsEntry>, path: string) {
-  const parts = path.split("/").filter(Boolean);
-  let current = "";
-  for (const part of parts.slice(0, -1)) {
-    current += `/${part}`;
-    entries[current] = entries[current] ?? { type: "dir" };
-  }
-}
-
-function dirname(path: string) {
-  if (path === "/") return "/";
-  const parts = path.split("/");
-  parts.pop();
-  return parts.join("/") || "/";
-}
-
-function basename(path: string) {
-  return path.split("/").filter(Boolean).pop() ?? "/";
-}
-
-function shortPath(path: string) {
-  return path.replace("/home/student", "~");
 }

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:terminal": "tsc --target ES2022 --module commonjs --moduleResolution node --esModuleInterop --skipLibCheck --outDir %TEMP%\\but-site-terminal-simulator-tests tests/terminal-simulator.test.ts src/lib/terminal-simulator.ts && node %TEMP%\\but-site-terminal-simulator-tests\\tests\\terminal-simulator.test.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.0",

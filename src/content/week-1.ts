@@ -160,8 +160,8 @@ const quiz = (
 });
 
 const day1Exercises = [
-  exercise(1, "a", "Où suis-je ?", "facile", 3, ["pwd", "repérage spatial"], "Ouvre Ubuntu, place-toi dans ton dossier personnel, puis affiche le chemin du dossier courant. Copie ce chemin sur une feuille.", ["Utiliser ls au lieu de pwd."], ["Cherche la commande qui dit où je suis.", "Elle tient en trois lettres.", "Elle commence par p."]),
-  exercise(1, "b", "Construire le socle", "facile", 8, ["mkdir", "cd", "organisation"], "Crée l'arborescence minimale but-prepa avec les dossiers 00_admin, 01_python_algo et 02_linux dans ton dossier personnel.", ["Créer les dossiers au mauvais endroit."], ["Commence par cd ~.", "Crée but-prepa.", "Entre dedans avant de créer les trois sous-dossiers."]),
+  exercise(1, "a", "Où suis-je ?", "facile", 3, ["pwd", "repérage spatial"], "Dans le terminal du site, commence dans ton dossier personnel avec `cd ~`, puis affiche le chemin du dossier courant avec `pwd`. Le but est de comprendre où tu te trouves avant d'agir.", ["Utiliser ls au lieu de pwd.", "Taper les commandes en majuscules alors que Linux utilise normalement les minuscules."], ["Cherche la commande qui dit où je suis.", "Elle tient en trois lettres.", "Elle commence par p."]),
+  exercise(1, "b", "Construire le socle", "facile", 8, ["mkdir", "cd", "organisation"], "Dans ton dossier personnel, crée d'abord le dossier `but-prepa`, entre dedans avec `cd but-prepa`, puis crée les trois sous-dossiers `00_admin`, `01_python_algo` et `02_linux` avec `mkdir`. Vérifie avec `ls`.", ["Créer les dossiers au mauvais endroit.", "Oublier d'entrer dans but-prepa avant de créer les trois sous-dossiers."], ["Commence par cd ~.", "Crée but-prepa avec mkdir but-prepa.", "Entre dedans avant de créer les trois sous-dossiers."]),
   exercise(1, "c", "Aller au bon endroit sans te perdre", "facile", 5, ["cd", "chemin relatif"], "Depuis ~/but-prepa, va dans 01_python_algo, reviens dans but-prepa, puis va dans 02_linux sans retaper un chemin absolu complet.", ["Utiliser toujours ~ au lieu d'apprendre le relatif."], ["Entre dans 01_python_algo avec cd.", "Pour revenir au parent, pense à ...", "Repars ensuite vers 02_linux."]),
   exercise(1, "d", "Premier fichier texte", "moyen", 8, ["echo", "redirection", "cat"], "Dans ~/but-prepa/02_linux/commandes, crée un fichier commandes.txt qui contient trois lignes : pwd, ls, cd. Puis affiche son contenu.", ["Utiliser > plusieurs fois et écraser le fichier."], ["> écrit dans un fichier.", ">> ajoute à la fin.", "Utilise cat pour vérifier."]),
   exercise(1, "e", "Copier puis renommer", "moyen", 6, ["cp", "mv"], "Fais une copie de commandes.txt nommée commandes_backup.txt. Puis renomme cette copie en mes_commandes.txt.", ["Déplacer au lieu de copier."], ["La copie se fait avec cp.", "Le renommage se fait avec mv.", "Travaille dans le bon dossier."]),
@@ -264,6 +264,14 @@ const days: Day[] = [
         exampleCode: "cd /home/thomas/but-prepa/01_python_algo\ncd 01_python_algo\ncd ..",
         keyTakeaways: ["~ désigne le dossier personnel.", ". désigne le dossier courant.", ".. désigne le dossier parent."],
         frequentMistakes: ["Retaper toujours des chemins absolus.", "Supprimer sans vérifier pwd et ls."],
+      },
+      {
+        id: "d1-basic-commands",
+        title: "Les commandes du jour",
+        content: "Avant les exercices, retiens cette logique : on vérifie où l'on est, on regarde ce qu'il y a, on se déplace, puis seulement on crée ou modifie des dossiers et fichiers.",
+        exampleCode: "pwd                  # où suis-je ?\nls                   # qu'y a-t-il ici ?\ncd ~                 # revenir au dossier personnel\nmkdir but-prepa      # créer un dossier\ncd but-prepa         # entrer dans ce dossier\nmkdir 00_admin 01_python_algo 02_linux\ncat fichier.txt      # lire un petit fichier",
+        keyTakeaways: ["mkdir crée un dossier.", "cd change de dossier.", "ls vérifie le résultat.", "Les commandes Linux s'écrivent en minuscules."],
+        frequentMistakes: ["Taper CD ou MKDIR : le vrai Linux est sensible aux majuscules.", "Créer les sous-dossiers avant d'être entré dans le bon dossier."],
       },
     ],
     afternoonExercises: day1Exercises,
